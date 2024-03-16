@@ -1,4 +1,4 @@
-package uz.pdp.g34jstlfilemanagement;
+package uz.pdp.g34jstlfilemanagement.servlet;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -7,11 +7,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import uz.pdp.g34jstlfilemanagement.model.SystemFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+
+import static uz.pdp.g34jstlfilemanagement.repo.SystemFileRepository.SYSTEM_FILES;
 
 @MultipartConfig
 public class FilesUploadServlet extends HttpServlet {
@@ -21,7 +24,7 @@ public class FilesUploadServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         System.out.println("user.home => " + System.getProperty("user.home"));
-        if (!Files.exists(PATH)){
+        if (!Files.exists(PATH)) {
             try {
                 Files.createDirectories(PATH);
             } catch (IOException e) {
@@ -39,9 +42,14 @@ public class FilesUploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Part file = req.getPart("file");
-        Files.copy(file.getInputStream(), PATH.resolve(file.getSubmittedFileName()), StandardCopyOption.REPLACE_EXISTING);
+        System.out.println(file.getName());
         System.out.println(file.getSubmittedFileName());
-        System.out.println(file.getContentType());
-        System.out.println(file.getSize());
+        Files.copy(file.getInputStream(), PATH.resolve(file.getSubmittedFileName()), StandardCopyOption.REPLACE_EXISTING);
+        boolean add = SYSTEM_FILES.add(new SystemFile(
+                file.getSubmittedFileName(),
+                file.getSubmittedFileName().substring(0, file.getSubmittedFileName().lastIndexOf('.')),
+                file.getSize())
+        );
+        resp.sendRedirect("/files/upload");
     }
 }

@@ -13,5 +13,9 @@
     <br>
     <button type="submit">Upload</button>
 </form>
+
+<br>
+<br>
+<a href="/files/download">Uploaded files</a>
 </body>
 </html>

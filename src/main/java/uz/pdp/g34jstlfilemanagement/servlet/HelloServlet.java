@@ -1,4 +1,4 @@
-package uz.pdp.g34jstlfilemanagement;
+package uz.pdp.g34jstlfilemanagement.servlet;
 
 import java.io.*;
 
